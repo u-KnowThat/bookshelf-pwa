@@ -35,12 +35,15 @@
   </div>
 
   <video id="video" playsinline muted></video>
+  <pre id="debug" class="tip" style="white-space:pre-wrap;background:#f1f5f9;padding:8px;border-radius:8px;margin-top:8px"></pre>
+
 
   <div id="result">結果將顯示於此</div>
 
   <!-- ZXing 條碼庫（CDN） -->
-  <script src="https://unpkg.com/@zxing/library@latest"></script>
-  <script src="app.js?v=3" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/@zxing/library@0.20.0"></script>
+  <script src="app.js?v=4" defer></script>
+
 
   <!-- 註冊 Service Worker（PWA 離線能力） -->
   <script>
