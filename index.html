@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>我的書櫃（PWA）</title>
+
+  <!-- PWA 必備 -->
+  <link rel="manifest" href="manifest.webmanifest">
+  <meta name="theme-color" content="#0d9488" />
+
+  <!-- 基本樣式 -->
+  <style>
+    body { font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans TC", sans-serif; margin: 0; padding: 16px; line-height: 1.5; }
+    header { display: flex; align-items: center; gap: 8px; }
+    .btn { padding: 10px 14px; border-radius: 8px; border: 1px solid #0d9488; background:#0d9488; color:#fff; cursor:pointer; }
+    .btn.secondary { background:#fff; color:#0d9488; }
+    #video { width: 100%; max-width: 480px; border-radius: 12px; background:#111; }
+    #result { margin-top: 12px; padding: 12px; border:1px solid #e5e7eb; border-radius:10px; background:#f8fafc; }
+    .book { display:flex; gap:12px; align-items: flex-start; }
+    .book img { width: 72px; height: 100px; object-fit: cover; border-radius: 6px; background:#eee; }
+    .tip { font-size: 12px; color:#475569; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>📚 我的書櫃（PWA）</h1>
+  </header>
+
+  <p class="tip">步驟：按「啟動相機」→ 將 ISBN 條碼置於取景框內 → 辨識成功會自動查詢 Google Books。</p>
+
+  <div style="display:flex; gap:8px; margin:12px 0;">
+    <button id="btnStart" class="btn">啟動相機</button>
+    <button id="btnStop" class="btn secondary">停止相機</button>
+  </div>
+
+  <video id="video" playsinline muted></video>
+
+  <div id="result">結果將顯示於此</div>
+
+  <!-- ZXing 條碼庫（CDN） -->
+  <script src="https://unpkg.com/@zxing/library@latest"></script>
+  <script src="app.js"></script>
+
+  <!-- 註冊 Service Worker（PWA 離線能力） -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('./service-worker.js');
+    }
+  </script>
+</body>
+</html>
