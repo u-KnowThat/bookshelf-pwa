@@ -68,44 +68,41 @@ async function queryGoogleBooks(isbn) {
 
 async function startScanLoop() {
   codeReader = new ZXing.BrowserMultiFormatReader();
-  scanning = true;
-
+  
   show('📷 相機已啟動，請將條碼置於取景區域...');
-  // 使用持續抓取畫面方式（更穩定）
-  while (scanning) {
-    try {
-      const result = await codeReader.decodeOnceFromVideoDevice(undefined, 'video');
-      const text = result?.text || '';
-      if (isISBN13(text)) {
-        scanning = false; // 停止掃描迴圈
-        show(`✅ 辨識到 ISBN：<b>${text}</b>，查詢中...`);
-        const meta = await queryGoogleBooks(text);
-        if (meta) {
-          show(`
-            <div class="book">
-              <img src="${meta.cover}" alt="cover" onerror="this.style.display='none';">
-              <div>
-                <div><b>書名：</b>${meta.title}</div>
-                <div><b>作者：</b>${meta.authors}</div>
-                <div><b>出版社：</b>${meta.publisher}</div>
-                <div><b>出版日：</b>${meta.publishedDate}</div>
-                <div class="tip">（下一步可將資料存到 IndexedDB／LocalStorage，並加入「實體／電子／雙收／願望清單」）</div>
+
+  try {
+    await codeReader.decodeFromVideoDevice(null, 'video', async (result, err) => {
+      if (result) {
+        const text = result.getText();
+        if (isISBN13(text)) {
+          show(`✅ 辨識到 ISBN：<b>${text}</b>，查詢中...`);
+          stopCamera(); // 先關閉掃描避免重複觸發
+
+          const meta = await queryGoogleBooks(text);
+          if (meta) {
+            show(`
+              <div class="book">
+                <img src="${meta.cover}" alt="cover" onerror="this.style.display='none';">
+                <div>
+                  <div><b>書名：</b>${meta.title}</div>
+                  <div><b>作者：</b>${meta.authors}</div>
+                  <div><b>出版社：</b>${meta.publisher}</div>
+                  <div><b>出版日：</b>${meta.publishedDate}</div>
+                </div>
               </div>
-            </div>
-          `);
-          // 這裡可加上本機儲存邏輯
-        } else {
-          show(`⚠️ 找不到此 ISBN 的書籍資料：${text}`);
+            `);
+          } else {
+            show(`⚠️ 找不到此 ISBN 的書籍資料：${text}`);
+          }
         }
-      } else {
-        // 非 ISBN-13，繼續掃
-        // 可顯示輔助訊息，但避免洗版
       }
-    } catch (e) {
-      // decode 超時或失敗時會丟例外，持續迴圈即可
-    }
+    });
+  } catch (e) {
+    show(`❌ 掃描失敗：${e.message}`);
   }
 }
+
 
 btnStart.addEventListener('click', async () => {
   stopCamera();
