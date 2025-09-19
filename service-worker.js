@@ -1,4 +1,4 @@
-const CACHE = 'bookshelf-pwa-v5';
+const CACHE = 'bookshelf-pwa-v6';
 const ASSETS = [
   './',
   './index.html',
